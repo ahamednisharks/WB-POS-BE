@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS users (
+  id               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  employee_id      INT UNSIGNED NULL COMMENT 'NULL only for the seed super admin',
+  username         VARCHAR(30)  NOT NULL,
+  password_hash    VARCHAR(100) NOT NULL,
+  role             ENUM('ADMIN','CASHIER') NOT NULL,
+  status           TINYINT(1)   NOT NULL DEFAULT 1 COMMENT '1 active, 0 blocked',
+  failed_attempts  INT          NOT NULL DEFAULT 0,
+  locked_until     DATETIME     NULL,
+  last_login_at    DATETIME     NULL,
+  is_deleted       TINYINT(1)   NOT NULL DEFAULT 0,
+  created_by       INT          NULL,
+  created_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_by       INT          NULL,
+  updated_at       DATETIME     NULL,
+  active_username  VARCHAR(30)  GENERATED ALWAYS AS (IF(is_deleted = 0, username, NULL)) VIRTUAL,
+  active_employee  INT UNSIGNED GENERATED ALWAYS AS (IF(is_deleted = 0, employee_id, NULL)) VIRTUAL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_users_username (active_username),
+  UNIQUE KEY uq_users_employee (active_employee),
+  KEY ix_users_status (status),
+  CONSTRAINT fk_users_employee FOREIGN KEY (employee_id) REFERENCES employees (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

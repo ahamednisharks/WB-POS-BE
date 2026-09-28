@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+uploads/
+.env
+*.log
+database/all_procedures.sql
+*.pem
+*.zip
