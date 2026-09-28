@@ -42,12 +42,13 @@ BEGIN
 
   DROP TEMPORARY TABLE IF EXISTS tmp_combo_items;
   CREATE TEMPORARY TABLE tmp_combo_items (
+    line_no INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     item_id INT NULL,
     qty     DECIMAL(12,3) NULL,
     price   DECIMAL(12,2) NULL,
     gst_pct DECIMAL(5,2) NULL,
     valid   TINYINT NOT NULL DEFAULT 0
-  ) ENGINE=MEMORY;
+  );
 
   INSERT INTO tmp_combo_items (item_id, qty)
   SELECT jt.item_id, ROUND(jt.qty, 3)

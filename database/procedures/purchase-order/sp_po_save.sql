@@ -76,7 +76,7 @@ BEGIN
     amount     DECIMAL(12,2) NOT NULL DEFAULT 0,
     gst_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
     valid      TINYINT NOT NULL DEFAULT 0
-  ) ENGINE=MEMORY;
+  );
 
   INSERT INTO tmp_po_items (line_no, item_id, qty, rate, gst_pct)
   SELECT jt.line_no, jt.item_id, ROUND(jt.qty, 3), ROUND(jt.rate, 2), jt.gst_pct

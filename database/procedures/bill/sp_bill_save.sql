@@ -117,7 +117,7 @@ proc: BEGIN
     sgst               DECIMAL(12,2) NOT NULL DEFAULT 0,
     line_total         DECIMAL(12,2) NOT NULL DEFAULT 0,
     valid              TINYINT NOT NULL DEFAULT 0
-  ) ENGINE=MEMORY;
+  );
 
   INSERT INTO tmp_bill_lines (line_no, item_id, combo_id, qty)
   SELECT jt.line_no, jt.item_id, jt.combo_id, ROUND(jt.qty, 3)
@@ -225,7 +225,7 @@ proc: BEGIN
     reference_no    VARCHAR(50) NULL,
     cash_received   DECIMAL(12,2) NULL,
     change_returned DECIMAL(12,2) NULL
-  ) ENGINE=MEMORY;
+  );
 
   IF p_status = 'COMPLETED' THEN
     INSERT INTO tmp_bill_pay (pay_no, payment_mode, amount, reference_no, cash_received)
@@ -345,7 +345,9 @@ proc: BEGIN
 
     -- Stock: plain items directly, combos per component x combo qty; one post per item in id order (lock order).
     DROP TEMPORARY TABLE IF EXISTS tmp_bill_stock_raw;
-    CREATE TEMPORARY TABLE tmp_bill_stock_raw (item_id INT NOT NULL, qty DECIMAL(12,3) NOT NULL) ENGINE=MEMORY;
+    CREATE TEMPORARY TABLE tmp_bill_stock_raw (
+      seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY, item_id INT NOT NULL, qty DECIMAL(12,3) NOT NULL
+    );
     INSERT INTO tmp_bill_stock_raw (item_id, qty)
     SELECT item_id, qty FROM tmp_bill_lines WHERE item_id IS NOT NULL;
     INSERT INTO tmp_bill_stock_raw (item_id, qty)
@@ -356,7 +358,7 @@ proc: BEGIN
     DROP TEMPORARY TABLE IF EXISTS tmp_bill_stock;
     CREATE TEMPORARY TABLE tmp_bill_stock (
       seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY, item_id INT NOT NULL, qty DECIMAL(12,3) NOT NULL
-    ) ENGINE=MEMORY;
+    );
     INSERT INTO tmp_bill_stock (item_id, qty)
     SELECT item_id, SUM(qty) FROM tmp_bill_stock_raw GROUP BY item_id ORDER BY item_id;
 

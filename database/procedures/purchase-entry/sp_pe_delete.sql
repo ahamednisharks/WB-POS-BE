@@ -34,7 +34,7 @@ BEGIN
   DROP TEMPORARY TABLE IF EXISTS tmp_pe_del;
   CREATE TEMPORARY TABLE tmp_pe_del (
     seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY, item_id INT NOT NULL, qty DECIMAL(12,3) NOT NULL
-  ) ENGINE=MEMORY;
+  );
   INSERT INTO tmp_pe_del (item_id, qty)
   SELECT item_id, SUM(received_qty) FROM purchase_entry_items WHERE pe_id = p_id GROUP BY item_id ORDER BY item_id;
 

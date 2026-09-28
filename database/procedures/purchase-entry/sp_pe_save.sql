@@ -129,7 +129,7 @@ BEGIN
     amount       DECIMAL(12,2) NOT NULL DEFAULT 0,
     gst_amount   DECIMAL(12,2) NOT NULL DEFAULT 0,
     valid        TINYINT NOT NULL DEFAULT 0
-  ) ENGINE=MEMORY;
+  );
 
   INSERT INTO tmp_pe_items (line_no, item_id, ordered_qty, received_qty, rate, gst_pct, expiry_date)
   SELECT jt.line_no, jt.item_id, jt.ordered_qty, ROUND(jt.received_qty, 3), ROUND(jt.rate, 2), jt.gst_pct, jt.expiry_date
@@ -208,7 +208,7 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS tmp_pe_old;
     CREATE TEMPORARY TABLE tmp_pe_old (
       seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY, item_id INT NOT NULL, qty DECIMAL(12,3) NOT NULL
-    ) ENGINE=MEMORY;
+    );
     INSERT INTO tmp_pe_old (item_id, qty)
     SELECT item_id, SUM(received_qty) FROM purchase_entry_items WHERE pe_id = v_id GROUP BY item_id ORDER BY item_id;
 
@@ -272,7 +272,7 @@ BEGIN
   DROP TEMPORARY TABLE IF EXISTS tmp_pe_stock;
   CREATE TEMPORARY TABLE tmp_pe_stock (
     seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY, item_id INT NOT NULL, qty DECIMAL(12,3) NOT NULL
-  ) ENGINE=MEMORY;
+  );
   INSERT INTO tmp_pe_stock (item_id, qty)
   SELECT item_id, received_qty FROM tmp_pe_items ORDER BY item_id;
 

@@ -52,7 +52,7 @@ BEGIN
     DROP TEMPORARY TABLE IF EXISTS tmp_cancel_stock;
     CREATE TEMPORARY TABLE tmp_cancel_stock (
       seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY, item_id INT NOT NULL, qty DECIMAL(12,3) NOT NULL
-    ) ENGINE=MEMORY;
+    );
     INSERT INTO tmp_cancel_stock (item_id, qty)
     SELECT item_id, SUM(qty_out) - SUM(qty_in)
       FROM stock_ledger
@@ -73,7 +73,7 @@ BEGIN
     CREATE TEMPORARY TABLE tmp_cancel_pay (
       seq INT NOT NULL AUTO_INCREMENT PRIMARY KEY, payment_mode VARCHAR(10) NOT NULL,
       amount DECIMAL(12,2) NOT NULL, reference_no VARCHAR(50) NULL
-    ) ENGINE=MEMORY;
+    );
     INSERT INTO tmp_cancel_pay (payment_mode, amount, reference_no)
     SELECT payment_mode, amount, reference_no FROM bill_payments WHERE bill_id = p_id ORDER BY id;
 
