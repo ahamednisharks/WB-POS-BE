@@ -26,7 +26,7 @@ BEGIN
   DECLARE v_cashier INT DEFAULT IF(p_role = 'CASHIER', p_user_id, p_cashier_id);
 
   SELECT b.id, b.bill_no, b.bill_date, b.cashier_id,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS cashier_name,
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS cashier_name,
          IFNULL(b.customer_mobile, '') AS customer_mobile, IFNULL(b.customer_name, '') AS customer_name,
          b.item_count, b.discount_type, b.discount_value, b.sub_total, b.discount_amount, b.taxable_amount,
          b.cgst, b.sgst, b.cgst + b.sgst AS total_gst, b.round_off, b.grand_total, b.payment_mode,

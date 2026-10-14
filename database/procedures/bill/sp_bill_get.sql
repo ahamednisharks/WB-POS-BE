@@ -1,7 +1,8 @@
 -- sp_bill_get
 -- Purpose : Full bill for the detail screen / printing. Cashiers can only open their own bills.
 -- Params  : p_id, p_user_id, p_role
--- Results : (1) header, (2) lines, (3) payments, (4) status history
+-- Results : (1) header (pre_order_no when the bill came from a pre-order), (2) lines,
+--           (3) payments (is_advance = paid on the pre-order before delivery), (4) status history
 -- Errors  : 45404 not found (or not visible to this cashier)
 CREATE PROCEDURE sp_bill_get(IN p_id INT, IN p_user_id INT, IN p_role VARCHAR(10))
 BEGIN
@@ -12,10 +13,11 @@ BEGIN
   END IF;
 
   SELECT b.id, b.bill_no, b.bill_date, b.cashier_id,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS cashier_name,
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS cashier_name,
          IFNULL(b.customer_mobile, '') AS customer_mobile, IFNULL(b.customer_name, '') AS customer_name,
          b.item_count, b.discount_type, b.discount_value, b.sub_total, b.discount_amount, b.taxable_amount,
-         b.cgst, b.sgst, b.cgst + b.sgst AS total_gst, b.round_off, b.grand_total, b.payment_mode,
+         b.cgst, b.sgst, b.cgst + b.sgst AS total_gst, b.delivery_charge, b.round_off, b.grand_total, b.payment_mode,
+         (SELECT po.order_no FROM pre_orders po WHERE po.bill_id = b.id LIMIT 1) AS pre_order_no,
          (SELECT SUM(bp.cash_received) FROM bill_payments bp WHERE bp.bill_id = b.id AND bp.payment_mode = 'CASH') AS cash_received,
          (SELECT SUM(bp.change_returned) FROM bill_payments bp WHERE bp.bill_id = b.id AND bp.payment_mode = 'CASH') AS change_returned,
          b.bill_status AS status, b.cancel_reason, b.cancelled_at, b.client_ref, b.device_id,
@@ -34,13 +36,14 @@ BEGIN
    WHERE bi.bill_id = p_id
    ORDER BY bi.line_no;
 
-  SELECT bp.payment_mode AS mode, bp.amount, bp.reference_no AS reference, bp.cash_received, bp.change_returned
+  SELECT bp.payment_mode AS mode, bp.amount, bp.reference_no AS reference, bp.cash_received, bp.change_returned,
+         bp.is_advance
     FROM bill_payments bp
    WHERE bp.bill_id = p_id
    ORDER BY bp.id;
 
   SELECT h.to_status AS status, h.changed_at AS `at`,
-         COALESCE(e.full_name, IF(u.id IS NOT NULL AND u.employee_id IS NULL, 'Administrator', u.username), 'System') AS `by`,
+         COALESCE(e.full_name, IF(u.id IS NOT NULL AND u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username), 'System') AS `by`,
          h.remarks AS note
     FROM bill_status_history h
     LEFT JOIN users u ON u.id = h.changed_by

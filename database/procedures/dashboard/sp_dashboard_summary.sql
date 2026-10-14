@@ -57,7 +57,7 @@ BEGIN
    LIMIT 5;
 
   SELECT b.id, b.bill_no, b.bill_date,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS cashier_name,
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS cashier_name,
          b.grand_total, b.payment_mode
     FROM bills b
     JOIN users u ON u.id = b.cashier_id

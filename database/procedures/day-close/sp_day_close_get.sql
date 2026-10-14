@@ -11,7 +11,7 @@ BEGIN
 
   SELECT d.id, d.close_date AS date, d.opening_cash, d.cash_sales, d.cash_refunds, d.cash_outs, d.expected_cash,
          d.counted_cash, d.difference, IFNULL(d.remarks, '') AS remarks, d.cashier_id AS closed_by_id,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS closed_by_name,
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS closed_by_name,
          d.created_at, IFNULL(d.updated_at, d.created_at) AS updated_at
     FROM day_closings d
     JOIN users u ON u.id = d.cashier_id

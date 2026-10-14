@@ -20,7 +20,7 @@ BEGIN
 
   SELECT t.txn_no, t.txn_date, t.txn_type AS type, t.payment_mode AS mode, t.amount, b.bill_no,
          t.reference_no AS reference, t.remarks AS note,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS cashier_name
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS cashier_name
     FROM transactions t
     JOIN users u ON u.id = t.user_id
     LEFT JOIN employees e ON e.id = u.employee_id

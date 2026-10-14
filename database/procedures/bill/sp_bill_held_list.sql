@@ -6,7 +6,7 @@
 CREATE PROCEDURE sp_bill_held_list(IN p_user_id INT, IN p_role VARCHAR(10))
 BEGIN
   SELECT b.id, b.bill_no, b.bill_date, b.cashier_id,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS cashier_name,
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS cashier_name,
          IFNULL(b.customer_mobile, '') AS customer_mobile, IFNULL(b.customer_name, '') AS customer_name,
          b.item_count, b.sub_total, b.discount_amount, b.grand_total, b.bill_status AS status,
          (SELECT JSON_ARRAYAGG(JSON_OBJECT('name', bi.item_name, 'qty', bi.qty, 'total', bi.line_total))

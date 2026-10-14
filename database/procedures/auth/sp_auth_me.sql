@@ -11,7 +11,7 @@ BEGIN
 
   SELECT u.id,
          u.username,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS name,
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS name,
          u.role,
          u.employee_id,
          e.emp_code,

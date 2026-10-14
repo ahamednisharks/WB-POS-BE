@@ -11,6 +11,8 @@ const BOOLEAN_KEYS = new Set([
   'allowNegativeStock',
   'isLocked',
   'isActive',
+  'isAdvance',
+  'atDelivery',
 ]);
 
 /** 'YYYY-MM-DD HH:mm:ss[.ffffff]' as produced by dateStrings / JSON_OBJECT (IST wall clock). */

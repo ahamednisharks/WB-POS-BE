@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
   id               INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  employee_id      INT UNSIGNED NULL COMMENT 'NULL only for the seed super admin',
+  employee_id      INT UNSIGNED NULL COMMENT 'NULL only for the seed admin and cashier',
   username         VARCHAR(30)  NOT NULL,
   password_hash    VARCHAR(100) NOT NULL,
   role             ENUM('ADMIN','CASHIER') NOT NULL,
@@ -25,3 +25,9 @@ CREATE TABLE IF NOT EXISTS users (
 -- Seed super admin: admin / admin@123 (bcrypt, 10 rounds). Change the password after the first login.
 INSERT IGNORE INTO users (id, employee_id, username, password_hash, role, status)
 VALUES (1, NULL, 'admin', '$2b$10$L16u6z4SVp.XAOeejl1SDuooFG/fD2tyXrAP8IW7Ml5mQSb092.NO', 'ADMIN', 1);
+
+-- Seed cashier: cashier / cashier@123 (bcrypt, 10 rounds). Skipped if a 'cashier' user exists, even a deleted one.
+INSERT INTO users (employee_id, username, password_hash, role, status)
+SELECT NULL, 'cashier', '$2b$10$XUNKh0YIRTJhQJuasUZad.KM/2I8fTd1qj0zdUcYPMpmu0QnqL9jS', 'CASHIER', 1
+  FROM DUAL
+ WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'cashier');

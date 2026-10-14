@@ -19,7 +19,7 @@ BEGIN
   DECLARE v_offset INT DEFAULT (GREATEST(IFNULL(p_page, 1), 1) - 1) * v_limit;
 
   SELECT u.id, u.employee_id, IFNULL(e.emp_code, '') AS emp_code,
-         COALESCE(e.full_name, IF(u.employee_id IS NULL, 'Administrator', u.username)) AS employee_name,
+         COALESCE(e.full_name, IF(u.employee_id IS NULL AND u.role = 'ADMIN', 'Administrator', u.username)) AS employee_name,
          u.username, u.role, IF(u.status = 1, 'ACTIVE', 'BLOCKED') AS status, u.last_login_at AS last_login,
          IF(u.locked_until > NOW(), 1, 0) AS is_locked,
          u.created_at, IFNULL(u.updated_at, u.created_at) AS updated_at
