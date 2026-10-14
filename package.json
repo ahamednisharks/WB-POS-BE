@@ -9,6 +9,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
+    "migrate": "ts-node -T database/scripts/migrate.ts",
     "db:migrate": "ts-node -T database/scripts/migrate.ts",
     "db:seed": "ts-node -T database/scripts/seed.ts",
     "db:bundle": "ts-node -T database/scripts/bundle.ts",

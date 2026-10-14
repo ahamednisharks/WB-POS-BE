@@ -21,3 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
   KEY ix_users_status (status),
   CONSTRAINT fk_users_employee FOREIGN KEY (employee_id) REFERENCES employees (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Seed super admin: admin / admin@123 (bcrypt, 10 rounds). Change the password after the first login.
+INSERT IGNORE INTO users (id, employee_id, username, password_hash, role, status)
+VALUES (1, NULL, 'admin', '$2b$10$L16u6z4SVp.XAOeejl1SDuooFG/fD2tyXrAP8IW7Ml5mQSb092.NO', 'ADMIN', 1);
