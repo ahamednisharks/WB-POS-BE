@@ -5,7 +5,7 @@ import { filterValue, pageArgs, searchOf, sortOf } from '../../../common/utils/q
 import { firstRow, mapRows, Row, totalOf } from '../../../common/utils/to-camel';
 import { DbService } from '../../../database/db.service';
 import { DeliveryType, PreOrderListQueryDto } from './dto/pre-order.dto';
-import { PreOrder, PreOrderHeader, PreOrderLine, PreOrderListRow, PreOrderPayment } from './pre-order.types';
+import { PreOrder, PreOrderHeader, PreOrderLine, PreOrderListRow, PreOrderNextNo, PreOrderPayment } from './pre-order.types';
 
 export interface PaymentParam {
   mode: string;
@@ -71,6 +71,11 @@ export class PreOrderRepository {
 
   async get(id: number): Promise<PreOrder> {
     return toPreOrder(await this.db.call<Row>('sp_preorder_get', [id]));
+  }
+
+  async nextNo(): Promise<PreOrderNextNo> {
+    const [rows] = await this.db.call<Row>('sp_preorder_next_no');
+    return firstRow<PreOrderNextNo>(rows)!;
   }
 
   async list(q: PreOrderListQueryDto): Promise<PagedData<PreOrderListRow>> {

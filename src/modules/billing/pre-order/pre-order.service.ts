@@ -5,7 +5,7 @@ import { FileStorageService } from '../../uploads/file-storage.service';
 import { BillPaymentDto } from '../bill/dto/bill.dto';
 import { DATETIME_RE, PreOrderCancelDto, PreOrderListQueryDto, PreOrderSaveDto } from './dto/pre-order.dto';
 import { PaymentParam, PreOrderRepository } from './pre-order.repository';
-import { PreOrder, PreOrderListRow } from './pre-order.types';
+import { PreOrder, PreOrderListRow, PreOrderNextNo } from './pre-order.types';
 
 const IST_OFFSET_MS = 330 * 60 * 1000;
 
@@ -56,6 +56,10 @@ export class PreOrderService {
 
   async get(id: number): Promise<PreOrder> {
     return this.view(await this.repo.get(id));
+  }
+
+  nextNo(): Promise<PreOrderNextNo> {
+    return this.repo.nextNo();
   }
 
   async save(id: number, dto: PreOrderSaveDto, user: AuthUser): Promise<ApiResult<PreOrder>> {

@@ -6,7 +6,7 @@ import { AuthUser } from '../../../common/types/auth-user';
 import { ApiResult } from '../../../common/utils/api-result';
 import { PreOrderCancelDto, PreOrderDeliverDto, PreOrderListQueryDto, PreOrderPaymentsDto, PreOrderSaveDto } from './dto/pre-order.dto';
 import { PreOrderService } from './pre-order.service';
-import { PreOrder, PreOrderListRow } from './pre-order.types';
+import { PreOrder, PreOrderListRow, PreOrderNextNo } from './pre-order.types';
 
 @ApiTags('Billing - Pre-orders')
 @Controller('pre-orders')
@@ -18,6 +18,12 @@ export class PreOrderController {
   @ApiOperation({ summary: 'List pre-orders by delivery date (sp_preorder_list). status: BOOKED | READY | DELIVERED | CANCELLED | OPEN' })
   list(@Query() q: PreOrderListQueryDto): Promise<ApiResult<PreOrderListRow[]>> {
     return this.service.list(q);
+  }
+
+  @Get('next-no')
+  @ApiOperation({ summary: 'Number and date for the New Pre-Order screen; the number is only taken on save (sp_preorder_next_no)' })
+  nextNo(): Promise<PreOrderNextNo> {
+    return this.service.nextNo();
   }
 
   @Get(':id')

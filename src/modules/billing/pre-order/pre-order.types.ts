@@ -84,3 +84,9 @@ export type PreOrderListRow = Omit<
   PreOrderHeader,
   'taxableAmount' | 'cgst' | 'sgst' | 'totalGst' | 'roundOff' | 'readyAt' | 'deliveredAt' | 'cancelReason' | 'refundAmount' | 'refundMode' | 'cancelledAt'
 > & { itemsSummary: string | null };
+
+/** Shown on the New Pre-Order screen; the number is only taken on save, so it can move on. */
+export interface PreOrderNextNo {
+  orderNo: string;
+  orderDate: string;
+}
