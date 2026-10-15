@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags, ApiTooManyRequestsResponse } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -8,7 +8,7 @@ import { AuthUser } from '../../common/types/auth-user';
 import { ApiResult, ok } from '../../common/utils/api-result';
 import { UserProfile } from './auth.repository';
 import { AuthService, LoginResponse } from './auth.service';
-import { ChangePasswordDto, LoginDto } from './dto/login.dto';
+import { ChangePasswordDto, LoginDto, SetThemeDto } from './dto/login.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -26,7 +26,7 @@ export class AuthController {
       example: {
         success: true,
         message: 'Login successful',
-        data: { token: 'eyJhbGciOi...', expiresIn: '8h', user: { id: '1', name: 'Administrator', role: 'ADMIN', username: 'admin', employeeId: null } },
+        data: { token: 'eyJhbGciOi...', expiresIn: '8h', user: { id: '1', name: 'Administrator', role: 'ADMIN', username: 'admin', employeeId: null, theme: 'golden' } },
       },
     },
   })
@@ -49,5 +49,13 @@ export class AuthController {
   async changePassword(@CurrentUser() user: AuthUser, @Body() dto: ChangePasswordDto): Promise<ApiResult<{ message: string }>> {
     const res = await this.auth.changePassword(user, dto);
     return ok({ message: res.message }, res.message);
+  }
+
+  @Put('theme')
+  @Roles('ADMIN', 'CASHIER')
+  @ApiOperation({ summary: 'Save own colour theme (golden / espresso / berry / forest)' })
+  async setTheme(@CurrentUser() user: AuthUser, @Body() dto: SetThemeDto): Promise<ApiResult<{ theme: string }>> {
+    const res = await this.auth.setTheme(user, dto);
+    return ok({ theme: res.theme }, res.message);
   }
 }

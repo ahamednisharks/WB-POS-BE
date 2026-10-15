@@ -22,6 +22,7 @@ export interface UserProfile {
   empCode: string | null;
   lastLoginAt: string | null;
   isActive: boolean;
+  theme: string;
 }
 
 @Injectable()
@@ -51,5 +52,10 @@ export class AuthRepository {
   async changePassword(userId: number, hash: string): Promise<WriteResult> {
     const [rows] = await this.db.call<Row>('sp_auth_change_password', [userId, hash]);
     return firstRow<WriteResult>(rows)!;
+  }
+
+  async setTheme(userId: number, theme: string): Promise<WriteResult & { theme: string }> {
+    const [rows] = await this.db.call<Row>('sp_auth_set_theme', [userId, theme]);
+    return firstRow<WriteResult & { theme: string }>(rows)!;
   }
 }

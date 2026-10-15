@@ -1,7 +1,7 @@
 -- sp_auth_me
 -- Purpose : Profile of the logged-in user (also used by the JWT strategy on every request).
 -- Params  : p_user_id
--- Results : (1) id, username, name, role, employee_id, emp_code, last_login_at, is_active
+-- Results : (1) id, username, name, role, employee_id, emp_code, last_login_at, is_active, theme
 -- Errors  : 45401 user no longer exists
 CREATE PROCEDURE sp_auth_me(IN p_user_id INT)
 BEGIN
@@ -16,7 +16,8 @@ BEGIN
          u.employee_id,
          e.emp_code,
          u.last_login_at,
-         IF(u.status = 1 AND IFNULL(e.emp_status, 'ACTIVE') = 'ACTIVE', 1, 0) AS is_active
+         IF(u.status = 1 AND IFNULL(e.emp_status, 'ACTIVE') = 'ACTIVE', 1, 0) AS is_active,
+         u.theme
     FROM users u
     LEFT JOIN employees e ON e.id = u.employee_id
    WHERE u.id = p_user_id;

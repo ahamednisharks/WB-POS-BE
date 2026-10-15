@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsBoolean, IsIn, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { PATTERNS, ToBoolean } from '../../../common/dto/validators';
 
 export class LoginDto {
@@ -31,4 +31,14 @@ export class ChangePasswordDto {
   @MinLength(6, { message: 'Password must be at least 6 characters' })
   @MaxLength(100)
   newPassword!: string;
+}
+
+/** Colour themes offered in the top bar; keep in sync with the frontend's core/theme/themes.ts. */
+export const THEME_IDS = ['golden', 'espresso', 'berry', 'forest'] as const;
+export type ThemeId = (typeof THEME_IDS)[number];
+
+export class SetThemeDto {
+  @ApiProperty({ enum: THEME_IDS, example: 'golden' })
+  @IsIn(THEME_IDS, { message: `Theme must be one of ${THEME_IDS.join(', ')}` })
+  theme!: ThemeId;
 }

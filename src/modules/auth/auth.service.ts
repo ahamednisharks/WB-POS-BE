@@ -6,14 +6,14 @@ import { AppConfig } from '../../config/configuration';
 import { AuthUser, JwtPayload } from '../../common/types/auth-user';
 import { WriteResult } from '../../common/utils/api-result';
 import { AuthRepository, UserProfile } from './auth.repository';
-import { ChangePasswordDto, LoginDto } from './dto/login.dto';
+import { ChangePasswordDto, LoginDto, SetThemeDto } from './dto/login.dto';
 
 export const BCRYPT_ROUNDS = 10;
 
 export interface LoginResponse {
   token: string;
   expiresIn: string;
-  user: { id: string; name: string; role: string; username: string; employeeId: string | null };
+  user: { id: string; name: string; role: string; username: string; employeeId: string | null; theme: string };
 }
 
 @Injectable()
@@ -43,7 +43,14 @@ export class AuthService {
     return {
       token,
       expiresIn,
-      user: { id: user.id, name: user.name, role: user.role, username: user.username, employeeId: user.employeeId },
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        username: user.username,
+        employeeId: user.employeeId,
+        theme: user.theme,
+      },
     };
   }
 
@@ -60,6 +67,10 @@ export class AuthService {
       throw new BadRequestException({ message: 'New password must be different', field: 'newPassword' });
     }
     return this.repo.changePassword(user.id, await bcrypt.hash(dto.newPassword, BCRYPT_ROUNDS));
+  }
+
+  setTheme(user: AuthUser, dto: SetThemeDto): Promise<WriteResult & { theme: string }> {
+    return this.repo.setTheme(user.id, dto.theme);
   }
 
   /** Used by the JWT strategy: the token is only valid while the user is still active. */
