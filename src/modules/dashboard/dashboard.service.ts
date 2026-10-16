@@ -10,6 +10,7 @@ export interface DashboardData {
   averageBill: number;
   cancelledCount: number;
   cancelledAmount: number;
+  lowStockCount: number;
   paymentSplit: { cash: number; upi: number; card: number };
   salesByHour: HourlySales[];
   topItems: TopItem[];
@@ -32,6 +33,7 @@ export class DashboardService {
       averageBill: s.cards.avgBill,
       cancelledCount: Number(s.cards.cancelledCount),
       cancelledAmount: s.cards.cancelledAmount,
+      lowStockCount: Number(s.cards.lowStockCount),
       paymentSplit: { cash: byMode('CASH'), upi: byMode('UPI'), card: byMode('CARD') },
       salesByHour: s.hours.map((h) => ({ hour: Number(h.hour), amount: h.amount, bills: Number(h.bills) })),
       topItems: s.topItems,

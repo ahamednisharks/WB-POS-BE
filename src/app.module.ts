@@ -17,6 +17,7 @@ import { BillingModule } from './modules/billing/billing.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { HealthModule } from './modules/health/health.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
 import { MasterModule } from './modules/master/master.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
@@ -64,6 +65,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     EmployeeModule,
     BillingModule,
     TransactionsModule,
+    InventoryModule,
     DashboardModule,
   ],
   providers: [

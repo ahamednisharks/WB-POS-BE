@@ -1,7 +1,7 @@
 -- sp_item_list
 -- Purpose : Paged item list with category / unit names.
 -- Params  : p_search (name, code, barcode, category), p_status (1/0/NULL), p_category_id, p_item_type (SALE|RAW|BOTH),
---           p_barcode (exact), p_saleable (1 = SALE/BOTH), p_purchasable (1 = RAW/BOTH), p_low_stock (1 = stock <= min, stock-tracked only),
+--           p_barcode (exact), p_saleable (1 = SALE/BOTH), p_purchasable (1 = RAW/BOTH), p_low_stock (1 = min_stock > 0 and stock <= min, stock-tracked only),
 --           p_sort_by (code|name|type|categoryName|sellingPrice|gstPercent|currentStock|status|createdAt), p_sort_dir, p_page, p_limit
 -- Results : (1) rows, (2) total
 -- Errors  : none
@@ -40,7 +40,7 @@ BEGIN
      AND (IFNULL(p_barcode, '') = '' OR i.barcode = p_barcode)
      AND (IFNULL(p_saleable, 0) = 0 OR i.item_type IN ('SALE', 'BOTH'))
      AND (IFNULL(p_purchasable, 0) = 0 OR i.item_type IN ('RAW', 'BOTH'))
-     AND (IFNULL(p_low_stock, 0) = 0 OR (i.item_type <> 'SALE' AND i.current_stock <= i.min_stock))
+     AND (IFNULL(p_low_stock, 0) = 0 OR (i.item_type <> 'SALE' AND i.min_stock > 0 AND i.current_stock <= i.min_stock))
      AND (IFNULL(p_search, '') = ''
           OR i.item_name LIKE CONCAT('%', p_search, '%')
           OR i.item_code LIKE CONCAT('%', p_search, '%')
@@ -77,7 +77,7 @@ BEGIN
      AND (IFNULL(p_barcode, '') = '' OR i.barcode = p_barcode)
      AND (IFNULL(p_saleable, 0) = 0 OR i.item_type IN ('SALE', 'BOTH'))
      AND (IFNULL(p_purchasable, 0) = 0 OR i.item_type IN ('RAW', 'BOTH'))
-     AND (IFNULL(p_low_stock, 0) = 0 OR (i.item_type <> 'SALE' AND i.current_stock <= i.min_stock))
+     AND (IFNULL(p_low_stock, 0) = 0 OR (i.item_type <> 'SALE' AND i.min_stock > 0 AND i.current_stock <= i.min_stock))
      AND (IFNULL(p_search, '') = ''
           OR i.item_name LIKE CONCAT('%', p_search, '%')
           OR i.item_code LIKE CONCAT('%', p_search, '%')

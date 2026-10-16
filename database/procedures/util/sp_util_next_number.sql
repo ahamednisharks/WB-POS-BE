@@ -1,7 +1,8 @@
 -- sp_util_next_number
 -- Purpose : Next document / master number. Locks the number_series row FOR UPDATE (call it inside
 --           the caller's transaction), creates the series on first use and increments it.
---           Financial-year series : BILL -> B2627-000123, PO -> PO2627-0001, PE -> PE2627-0001, TXN -> T2627-000001
+--           Financial-year series : BILL -> B2627-000123, PO -> PO2627-0001, PE -> PE2627-0001, TXN -> T2627-000001,
+--                                   STI -> SI2627-0001 (stock issue)
 --           Calendar-year series  : PRE -> WB-PRE-2026-0001 (restarts every 1 January)
 --           Master series         : ITM -> ITM0001, SUP -> SUP001, EMP -> EMP001
 -- Params  : p_series VARCHAR(20), OUT p_number VARCHAR(20)
@@ -15,7 +16,7 @@ BEGIN
   DECLARE v_pad    INT;
   DECLARE v_no     INT UNSIGNED;
 
-  IF p_series IN ('BILL', 'PO', 'PE', 'TXN') THEN
+  IF p_series IN ('BILL', 'PO', 'PE', 'TXN', 'STI') THEN
     CALL sp_util_fy_code(CURDATE(), v_fy);
   ELSEIF p_series = 'PRE' THEN
     SET v_fy = YEAR(CURDATE());  -- calendar year, keys the series per year like the FY code does
@@ -26,6 +27,7 @@ BEGIN
     WHEN 'PO'   THEN SET v_prefix = CONCAT('PO', v_fy, '-'), v_pad = 4;
     WHEN 'PE'   THEN SET v_prefix = CONCAT('PE', v_fy, '-'), v_pad = 4;
     WHEN 'TXN'  THEN SET v_prefix = CONCAT('T', v_fy, '-'),  v_pad = 6;
+    WHEN 'STI'  THEN SET v_prefix = CONCAT('SI', v_fy, '-'), v_pad = 4;
     WHEN 'PRE'  THEN SET v_prefix = CONCAT('WB-PRE-', v_fy, '-'), v_pad = 4;
     WHEN 'ITM'  THEN SET v_prefix = 'ITM', v_pad = 4;
     WHEN 'SUP'  THEN SET v_prefix = 'SUP', v_pad = 3;

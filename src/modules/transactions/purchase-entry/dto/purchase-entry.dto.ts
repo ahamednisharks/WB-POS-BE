@@ -44,7 +44,14 @@ export class PeSaveDto {
   @Min(1, { message: 'Supplier is required' })
   supplierId!: number;
 
-  @ApiPropertyOptional({ nullable: true }) @IsOptional() @OptionalNullable() @IsInt() @Min(1) poId?: number | null;
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @OptionalNullable()
+  // `number | null` emits design:type Object, so implicit conversion skips it — ids arrive as strings.
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  poId?: number | null;
 
   @ApiProperty({ example: 'INV-1001' })
   @IsString()

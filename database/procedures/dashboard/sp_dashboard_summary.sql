@@ -1,12 +1,13 @@
 -- sp_dashboard_summary
 -- Purpose : Admin dashboard for a date range (completed bills only unless stated).
 -- Params  : p_from DATE (NULL = today), p_to DATE (NULL = p_from)
--- Results : (1) cards: from_date, to_date, total_sales, total_bills, avg_bill, cancelled_count, cancelled_amount
+-- Results : (1) cards: from_date, to_date, total_sales, total_bills, avg_bill, cancelled_count, cancelled_amount,
+--               low_stock_count (not date-bound: items at or below their min stock right now)
 --           (2) payment split: mode, amount (net of nothing - what was collected on completed bills)
 --           (3) sales by hour 7..23: hour, amount, bills (missing hours filled with 0)
 --           (4) top 5 items / combos by amount: name, qty, amount
 --           (5) last 10 completed bills
---           (6) low-stock items (stock-tracked, active, current_stock < min_stock)
+--           (6) low-stock items (stock-tracked, active, min_stock > 0 and current_stock <= min_stock)
 -- Errors  : 45000 from after to
 CREATE PROCEDURE sp_dashboard_summary(IN p_from DATE, IN p_to DATE)
 BEGIN
@@ -22,7 +23,10 @@ BEGIN
          IFNULL(SUM(b.bill_status = 'COMPLETED'), 0) AS total_bills,
          IFNULL(ROUND(SUM(IF(b.bill_status = 'COMPLETED', b.grand_total, 0)) / NULLIF(SUM(b.bill_status = 'COMPLETED'), 0), 2), 0) AS avg_bill,
          IFNULL(SUM(b.bill_status = 'CANCELLED'), 0) AS cancelled_count,
-         IFNULL(SUM(IF(b.bill_status = 'CANCELLED', b.grand_total, 0)), 0) AS cancelled_amount
+         IFNULL(SUM(IF(b.bill_status = 'CANCELLED', b.grand_total, 0)), 0) AS cancelled_amount,
+         (SELECT COUNT(*) FROM items li
+           WHERE li.is_deleted = 0 AND li.status = 1 AND li.item_type <> 'SALE'
+             AND li.min_stock > 0 AND li.current_stock <= li.min_stock) AS low_stock_count
     FROM bills b
    WHERE b.is_deleted = 0 AND b.bill_status IN ('COMPLETED', 'CANCELLED')
      AND b.bill_date >= v_from AND b.bill_date < v_to + INTERVAL 1 DAY;
@@ -72,7 +76,7 @@ BEGIN
     FROM items i
     JOIN units u ON u.id = i.unit_id
    WHERE i.is_deleted = 0 AND i.status = 1 AND i.item_type <> 'SALE'
-     AND i.min_stock > 0 AND i.current_stock < i.min_stock
+     AND i.min_stock > 0 AND i.current_stock <= i.min_stock
    ORDER BY (i.current_stock / i.min_stock), i.item_name
    LIMIT 20;
 END

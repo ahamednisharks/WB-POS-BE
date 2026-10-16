@@ -3,7 +3,8 @@
 --           a stock_ledger row with the running balance.
 --           Negative stock is refused for RAW items, and for SALE/BOTH items when
 --           shop_settings.allow_negative_stock = 0.
--- Params  : p_item_id, p_type (OPENING|PURCHASE|SALE|SALE_CANCEL|PE_EDIT|ADJUST), p_ref_table, p_ref_id,
+-- Params  : p_item_id, p_type (OPENING|PURCHASE|SALE|SALE_CANCEL|PE_EDIT|ADJUST|ISSUE|ISSUE_CANCEL|PRODUCTION),
+--           p_ref_table, p_ref_id,
 --           p_qty_in, p_qty_out, p_user_id
 -- Results : none
 -- Errors  : 45404 item not found, 45000 insufficient stock

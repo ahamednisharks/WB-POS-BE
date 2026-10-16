@@ -52,6 +52,9 @@ export interface StockLedgerRow {
   refTable: string | null;
   refId: string | null;
   refNo: string | null;
+  /** Stock issues: line reason and remarks, e.g. 'PRODUCTION - morning batch'. */
+  refNote: string | null;
+  createdByName: string | null;
   qtyIn: number;
   qtyOut: number;
   balanceAfter: number;

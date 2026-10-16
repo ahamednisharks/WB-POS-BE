@@ -10,6 +10,8 @@ export interface DashboardCards {
   avgBill: number;
   cancelledCount: number;
   cancelledAmount: number;
+  /** Items at or below their min stock right now (not date-bound). */
+  lowStockCount: number;
 }
 
 export interface HourlySales {
